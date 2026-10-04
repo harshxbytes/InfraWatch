@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+    <title>{{ project.name }} | InfraWatch AI</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Inter, Segoe UI, Arial, sans-serif;
+            background: #080b12;
+            color: #f5f7fb;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: auto;
+            padding: 28px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+        }
+
+        .back {
+            color: #9ba5b7;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .back:hover {
+            color: #fff;
+        }
+
+        .brand {
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        .brand span {
+            color: #6ee7b7;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #111827, #0d111b);
+            border: 1px solid #1f2937;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 22px;
+        }
+
+        .hero-content {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .hero h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .meta {
+            color: #9ba5b7;
+            font-size: 14px;
+            display: flex;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+
+        .status {
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            background: rgba(239, 68, 68, .12);
+            color: #f87171;
+            white-space: nowrap;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 22px;
+        }
+
+        .card {
+            background: #10151f;
+            border: 1px solid #1f2937;
+            border-radius: 16px;
+            padding: 20px;
+        }
+
+        .label {
+            color: #8c97a8;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            margin-bottom: 9px;
+        }
+
+        .value {
+            font-size: 27px;
+            font-weight: 800;
+        }
+
+        .sub {
+            font-size: 12px;
+            color: #7f8a9c;
+            margin-top: 7px;
+        }
+
+        .risk-high {
+            color: #f87171;
+        }
+
+        .risk-medium {
+            color: #fbbf24;
+        }
+
+        .risk-low {
+            color: #6ee7b7;
+        }
+
+        .two {
+            display: grid;
+            grid-template-columns: 1.4fr .6fr;
+            gap: 20px;
+        }
+
+        .section {
+            background: #10151f;
+            border: 1px solid #1f2937;
+            border-radius: 18px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .section h2 {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .progress-row {
+            margin-bottom: 22px;
+        }
+
+        .progress-head {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 9px;
+            font-size: 14px;
+        }
+
+        .track {
+            height: 10px;
+            background: #202735;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .fill {
+            height: 100%;
+            border-radius: 10px;
+        }
+
+        .planned {
+            background: #64748b;
+        }
+
+        .actual {
+            background: #6ee7b7;
+        }
+
+        .reason {
+            padding: 14px;
+            background: #161d29;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            color: #c7cfdb;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .forecast {
+            display: grid;
+            gap: 12px;
+        }
+
+        .forecast-item {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 14px;
+            background: #161d29;
+            border-radius: 12px;
+            font-size: 14px;
+        }
+
+        .forecast-item span:last-child {
+            font-weight: 700;
+            text-align: right;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 13px;
+            border-bottom: 1px solid #202735;
+            font-size: 13px;
+        }
+
+        th {
+            color: #7f8a9c;
+            font-weight: 600;
+        }
+
+        td {
+            color: #d7dce5;
+        }
+
+        .badge {
+            padding: 5px 9px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .overdue {
+            background: rgba(239, 68, 68, .12);
+            color: #f87171;
+        }
+
+        .good {
+            background: rgba(110, 231, 183, .1);
+            color: #6ee7b7;
+        }
+
+        .neutral {
+            background: rgba(148, 163, 184, .1);
+            color: #94a3b8;
+        }
+
+        @media(max-width:1000px) {
+
+            .grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .two {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+        @media(max-width:600px) {
+
+            .container {
+                padding: 16px;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero h1 {
+                font-size: 24px;
+            }
+
+            .hero-content {
+                flex-direction: column;
+            }
+
+            .forecast-item {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .forecast-item span:last-child {
+                text-align: left;
+            }
+
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="topbar">
+
+            <a class="back" href="/">
+                ← Back to Dashboard
+            </a>
+
+            <div class="brand">
+                INFRA<span>WATCH AI</span>
+            </div>
+
+        </div>
+
+
+        <div class="hero">
+
+            <div class="hero-content">
+
+                <div>
+
+                    <h1>
+                        {{ project.name }}
+                    </h1>
+
+                    <div class="meta">
+
+                        <span>
+                            📍 {{ project.location }}
+                        </span>
+
+                        <span>
+                            🏛 {{ project.department }}
+                        </span>
+
+                        <span>
+                            👷 {{ project.contractor }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <div class="status">
+                    {{ project.status }}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="grid">
+
+
+            <div class="card">
+
+                <div class="label">
+                    Delay Risk
+                </div>
+
+                <div class="value
+{% if project.delay_risk >= 70 %}
+risk-high
+{% elif project.delay_risk >= 40 %}
+risk-medium
+{% else %}
+risk-low
+{% endif %}
+">
+
+                    {{ project.delay_risk }}%
+
+                </div>
+
+                <div class="sub">
+                    Probability of project delay
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="label">
+                    Cost Overrun Risk
+                </div>
+
+                <div class="value
+{% if project.cost_overrun_risk >= 70 %}
+risk-high
+{% elif project.cost_overrun_risk >= 40 %}
+risk-medium
+{% else %}
+risk-low
+{% endif %}
+">
+
+                    {{ project.cost_overrun_risk }}%
+
+                </div>
+
+                <div class="sub">
+                    Probability of budget overrun
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="label">
+                    Progress Gap
+                </div>
+
+                <div class="value
+{% if project.planned_progress - project.actual_progress > 15 %}
+risk-high
+{% elif project.planned_progress - project.actual_progress > 5 %}
+risk-medium
+{% else %}
+risk-low
+{% endif %}
+">
+
+                    {{ project.planned_progress - project.actual_progress }}%
+
+                </div>
+
+                <div class="sub">
+                    Difference from planned progress
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="label">
+                    Overdue Milestones
+                </div>
+
+                <div class="value
+{% if project.overdue_milestones > 0 %}
+risk-high
+{% else %}
+risk-low
+{% endif %}
+">
+
+                    {{ project.overdue_milestones }}
+
+                </div>
+
+                <div class="sub">
+                    Currently overdue
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="two">
+
+
+            <div>
+
+
+                <div class="section">
+
+                    <h2>
+                        Progress Monitoring
+                    </h2>
+
+
+                    <div class="progress-row">
+
+                        <div class="progress-head">
+
+                            <span>
+                                Planned Progress
+                            </span>
+
+                            <strong>
+                                {{ project.planned_progress }}%
+                            </strong>
+
+                        </div>
+
+                        <div class="track">
+
+                            <div class="fill planned" style="width:{{ project.planned_progress }}%">
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="progress-row">
+
+                        <div class="progress-head">
+
+                            <span>
+                                Actual Progress
+                            </span>
+
+                            <strong>
+                                {{ project.actual_progress }}%
+                            </strong>
+
+                        </div>
+
+                        <div class="track">
+
+                            <div class="fill actual" style="width:{{ project.actual_progress }}%">
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="section">
+
+                    <h2>
+                        Risk Drivers
+                    </h2>
+
+                    {% for reason in project.reasons %}
+
+                    <div class="reason">
+                        ⚠ {{ reason }}
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+
+                <div class="section">
+
+                    <h2>
+                        Project Timeline
+                    </h2>
+
+                    <table>
+
+                        <tr>
+                            <th>Milestone</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                        </tr>
+
+                        <tr>
+
+                            <td>
+                                Project Start
+                            </td>
+
+                            <td>
+                                2026-01-15
+                            </td>
+
+                            <td>
+                                <span class="badge good">
+                                    Completed
+                                </span>
+                            </td>
+
+                        </tr>
+
+
+                        <tr>
+
+                            <td>
+                                Current Phase
+                            </td>
+
+                            <td>
+                                2027-01-15
+                            </td>
+
+                            <td>
+
+                                <span class="badge
+{% if project.overdue_milestones > 0 %}
+overdue
+{% else %}
+good
+{% endif %}
+">
+
+                                    {% if project.overdue_milestones > 0 %}
+                                    Delayed
+                                    {% else %}
+                                    On Track
+                                    {% endif %}
+
+                                </span>
+
+                            </td>
+
+                        </tr>
+
+
+                        <tr>
+
+                            <td>
+                                Expected Completion
+                            </td>
+
+                            <td>
+                                {{ project.expected_completion }}
+                            </td>
+
+                            <td>
+
+                                <span class="badge overdue">
+                                    Forecast
+                                </span>
+
+                            </td>
+
+                        </tr>
+
+
+                        <tr>
+
+                            <td>
+                                Original Completion
+                            </td>
+
+                            <td>
+                                {{ project.original_completion }}
+                            </td>
+
+                            <td>
+
+                                <span class="badge neutral">
+                                    Baseline
+                                </span>
+
+                            </td>
+
+                        </tr>
+
+                    </table>
+
+                </div>
+
+
+            </div>
+
+
+            <div>
+
+
+                <div class="section">
+
+                    <h2>
+                        Financial Overview
+                    </h2>
+
+                    <div class="forecast">
+
+
+                        <div class="forecast-item">
+
+                            <span>
+                                Total Budget
+                            </span>
+
+                            <span>
+                                ₹{{ "{:,.2f}".format(project.budget / 10000000) }} Cr
+                            </span>
+
+                        </div>
+
+
+                        <div class="forecast-item">
+
+                            <span>
+                                Amount Spent
+                            </span>
+
+                            <span>
+                                ₹{{ "{:,.2f}".format(project.spent / 10000000) }} Cr
+                            </span>
+
+                        </div>
+
+
+                        <div class="forecast-item">
+
+                            <span>
+                                Remaining
+                            </span>
+
+                            <span>
+                                ₹{{ "{:,.2f}".format((project.budget - project.spent) / 10000000) }} Cr
+                            </span>
+
+                        </div>
+
+
+                        <div class="forecast-item">
+
+                            <span>
+                                Spend Ratio
+                            </span>
+
+                            <span>
+                                {{ ((project.spent / project.budget) * 100)|round(1) }}%
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="section">
+
+                    <h2>
+                        Forecast
+                    </h2>
+
+                    <div class="forecast">
+
+
+                        <div class="forecast-item">
+
+                            <span>
+                                Expected Completion
+                            </span>
+
+                            <span>
+                                {{ project.expected_completion }}
+                            </span>
+
+                        </div>
+
+
+                        <div class="forecast-item">
+
+                            <span>
+                                Baseline Completion
+                            </span>
+
+                            <span>
+                                {{ project.original_completion }}
+                            </span>
+
+                        </div>
+
+
+                        <div class="forecast-item">
+
+                            <span>
+                                Contractor Delay History
+                            </span>
+
+                            <span>
+                                {{ project.contractor_delay_history }} incidents
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="section">
+
+                    <h2>
+                        AI Explanation
+                    </h2>
+
+                    <div class="reason">
+
+                        The current risk assessment considers the project's progress gap, milestone performance,
+                        expenditure pattern and contractor history.
+
+                    </div>
+
+                    <div class="reason">
+
+                        <strong>
+                            AI Engine:
+                        </strong>
+
+                        The machine-learning engine will update this assessment as new project monitoring data becomes
+                        available.
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>

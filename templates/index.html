@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>InfraWatch AI</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Inter, Segoe UI, Arial, sans-serif;
+            background: #f5f7fa;
+            color: #17202a;
+        }
+
+        .app {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 245px;
+            background: #111827;
+            color: white;
+            padding: 28px 18px;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+        }
+
+        .brand {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            padding: 5px 10px 35px;
+        }
+
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: #22c55e;
+            color: #07130c;
+            display: grid;
+            place-items: center;
+            font-size: 21px;
+            font-weight: 900;
+        }
+
+        .brand h2 {
+            font-size: 17px;
+        }
+
+        .brand span {
+            font-size: 8px;
+            letter-spacing: 1.5px;
+            color: #94a3b8;
+        }
+
+        nav {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        nav a {
+            color: #94a3b8;
+            text-decoration: none;
+            padding: 13px 14px;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            transition: .2s;
+        }
+
+        nav a:hover,
+        nav a.active {
+            background: #1f2937;
+            color: white;
+        }
+
+        .sidebar-bottom {
+            position: absolute;
+            bottom: 30px;
+            left: 28px;
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            font-size: 10px;
+            color: #64748b;
+        }
+
+        .sidebar-bottom strong {
+            color: #22c55e;
+        }
+
+        .main {
+            margin-left: 245px;
+            width: calc(100% - 245px);
+            padding: 35px 45px 60px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 35px;
+        }
+
+        .eyebrow {
+            font-size: 10px;
+            letter-spacing: 1.8px;
+            color: #64748b;
+            font-weight: 800;
+        }
+
+        .topbar h1 {
+            font-size: 30px;
+            margin-top: 5px;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .live {
+            background: white;
+            border: 1px solid #e2e8f0;
+            padding: 9px 13px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+
+        .live span {
+            display: inline-block;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #22c55e;
+            margin-right: 6px;
+        }
+
+        .avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: #111827;
+            color: white;
+            display: grid;
+            place-items: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 35px;
+        }
+
+        .stat-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            padding: 22px;
+        }
+
+        .stat-card.danger {
+            border-left: 4px solid #ef4444;
+        }
+
+        .stat-card.warning {
+            border-left: 4px solid #f59e0b;
+        }
+
+        .stat-card.success {
+            border-left: 4px solid #22c55e;
+        }
+
+        .stat-label {
+            font-size: 10px;
+            letter-spacing: 1px;
+            color: #64748b;
+            font-weight: 700;
+        }
+
+        .stat-value {
+            font-size: 30px;
+            font-weight: 800;
+            margin: 9px 0;
+        }
+
+        .stat-info {
+            color: #94a3b8;
+            font-size: 11px;
+        }
+
+        .section {
+            margin-bottom: 38px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: end;
+            margin-bottom: 18px;
+        }
+
+        .section-header h2 {
+            font-size: 21px;
+            margin-top: 4px;
+        }
+
+        select {
+            padding: 10px 14px;
+            border: 1px solid #dbe1e8;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+        }
+
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+        }
+
+        .project-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            padding: 22px;
+            cursor: pointer;
+            transition: .2s;
+        }
+
+        .project-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, .07);
+        }
+
+        .project-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 20px;
+        }
+
+        .project-id {
+            color: #64748b;
+            font-size: 11px;
+        }
+
+        .project-card h3 {
+            font-size: 16px;
+            margin-top: 5px;
+            line-height: 1.35;
+        }
+
+        .location {
+            color: #64748b;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .risk-score {
+            font-size: 23px;
+            font-weight: 900;
+        }
+
+        .high {
+            color: #ef4444;
+        }
+
+        .medium {
+            color: #f59e0b;
+        }
+
+        .low {
+            color: #16a34a;
+        }
+
+        .project-progress {
+            margin: 20px 0;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            margin-bottom: 7px;
+        }
+
+        .bar {
+            height: 7px;
+            background: #edf0f2;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .bar div {
+            height: 100%;
+            background: #111827;
+            border-radius: inherit;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            color: #64748b;
+            font-size: 11px;
+            padding-top: 14px;
+            border-top: 1px solid #edf0f2;
+        }
+
+        .alert {
+            background: white;
+            border-left: 4px solid #ef4444;
+            border-radius: 10px;
+            padding: 18px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .alert h4 {
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .alert p {
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        .alert-score {
+            font-weight: 800;
+            color: #ef4444;
+        }
+
+        .empty {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            padding: 35px;
+            text-align: center;
+            color: #64748b;
+        }
+
+        @media(max-width:1100px) {
+            .project-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media(max-width:800px) {
+            .sidebar {
+                width: 75px;
+            }
+
+            .brand div:last-child {
+                display: none;
+            }
+
+            nav a {
+                font-size: 0;
+                justify-content: center;
+            }
+
+            nav a span {
+                font-size: 18px;
+            }
+
+            .main {
+                margin-left: 75px;
+                width: calc(100% - 75px);
+                padding: 25px;
+            }
+
+            .project-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media(max-width:550px) {
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .main {
+                padding: 20px 15px;
+            }
+
+            .topbar h1 {
+                font-size: 24px;
+            }
+
+            .topbar-right {
+                gap: 7px;
+            }
+
+            .live {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="app">
+
+        <aside class="sidebar">
+
+            <div class="brand">
+                <div class="brand-icon">I</div>
+
+                <div>
+                    <h2>InfraWatch</h2>
+                    <span>AI MONITORING</span>
+                </div>
+            </div>
+
+            <nav>
+
+                <a class="active" href="/">
+                    <span>▦</span>
+                    Dashboard
+                </a>
+
+                <a href="#projects">
+                    <span>◫</span>
+                    Projects
+                </a>
+
+                <a href="#alerts">
+                    <span>⚠</span>
+                    Risk Alerts
+                </a>
+
+            </nav>
+
+            <div class="sidebar-bottom">
+                <span>AI ENGINE</span>
+                <strong>● ONLINE</strong>
+            </div>
+
+        </aside>
+
+        <main class="main">
+
+            <header class="topbar">
+
+                <div>
+                    <p class="eyebrow">INFRASTRUCTURE MONITORING</p>
+                    <h1>Project Intelligence</h1>
+                </div>
+
+                <div class="topbar-right">
+
+                    <div class="live">
+                        <span></span>
+                        Live Monitoring
+                    </div>
+
+                    <div class="avatar">
+                        AI
+                    </div>
+
+                </div>
+
+            </header>
+
+            <section class="stats">
+
+                <div class="stat-card">
+                    <div class="stat-label">TOTAL PROJECTS</div>
+                    <div class="stat-value" id="totalProjects">—</div>
+                    <div class="stat-info">Under monitoring</div>
+                </div>
+
+                <div class="stat-card danger">
+                    <div class="stat-label">HIGH RISK</div>
+                    <div class="stat-value" id="highRisk">—</div>
+                    <div class="stat-info">Require attention</div>
+                </div>
+
+                <div class="stat-card warning">
+                    <div class="stat-label">MEDIUM RISK</div>
+                    <div class="stat-value" id="mediumRisk">—</div>
+                    <div class="stat-info">Being monitored</div>
+                </div>
+
+                <div class="stat-card success">
+                    <div class="stat-label">ON TRACK</div>
+                    <div class="stat-value" id="lowRisk">—</div>
+                    <div class="stat-info">Low risk projects</div>
+                </div>
+
+            </section>
+
+            <section class="section" id="projects">
+
+                <div class="section-header">
+
+                    <div>
+                        <p class="eyebrow">AI RISK ENGINE</p>
+                        <h2>Project Risk Overview</h2>
+                    </div>
+
+                    <select id="riskFilter">
+
+                        <option value="all">All Projects</option>
+                        <option value="high">High Risk</option>
+                        <option value="medium">Medium Risk</option>
+                        <option value="low">Low Risk</option>
+
+                    </select>
+
+                </div>
+
+                <div class="project-grid" id="projectGrid"></div>
+
+            </section>
+
+            <section class="section" id="alerts">
+
+                <div class="section-header">
+
+                    <div>
+                        <p class="eyebrow">EARLY WARNING SYSTEM</p>
+                        <h2>Risk Alerts</h2>
+                    </div>
+
+                </div>
+
+                <div id="alertsContainer"></div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+    <script>
+        let projects = [];
+
+        async function loadDashboard() {
+
+            try {
+
+                const summaryResponse = await fetch("/api/summary");
+                const summary = await summaryResponse.json();
+
+                document.getElementById("totalProjects").textContent = summary.total_projects;
+                document.getElementById("highRisk").textContent = summary.high_risk;
+                document.getElementById("mediumRisk").textContent = summary.medium_risk;
+                document.getElementById("lowRisk").textContent = summary.low_risk;
+
+                const projectResponse = await fetch("/api/projects");
+                projects = await projectResponse.json();
+
+                renderProjects(projects);
+                renderAlerts(projects);
+
+            } catch (error) {
+
+                console.error("Dashboard error:", error);
+
+                document.getElementById("projectGrid").innerHTML =
+                    '<div class="empty">Unable to load project data.</div>';
+
+            }
+
+        }
+
+        function getRiskClass(score) {
+
+            if (score >= 70) return "high";
+            if (score >= 40) return "medium";
+            return "low";
+
+        }
+
+        function renderProjects(data) {
+
+            const container = document.getElementById("projectGrid");
+
+            container.innerHTML = "";
+
+            if (data.length === 0) {
+
+                container.innerHTML =
+                    '<div class="empty">No projects found.</div>';
+
+                return;
+
+            }
+
+            data.forEach(project => {
+
+                const riskClass = getRiskClass(project.delay_risk);
+
+                const card = document.createElement("div");
+
+                card.className = "project-card";
+
+                card.onclick = () => {
+                    window.location.href = `/project/${project.project_id}`;
+                };
+
+                card.innerHTML = `
+
+<div class="project-top">
+
+<div>
+
+<div class="project-id">
+${project.project_id}
+</div>
+
+<h3>
+${project.name}
+</h3>
+
+<div class="location">
+📍 ${project.location}
+</div>
+
+</div>
+
+<div class="risk-score ${riskClass}">
+${project.delay_risk}%
+</div>
+
+</div>
+
+<div class="project-progress">
+
+<div class="progress-info">
+
+<span>Physical Progress</span>
+
+<strong>
+${project.actual_progress}%
+</strong>
+
+</div>
+
+<div class="bar">
+
+<div style="width:${project.actual_progress}%"></div>
+
+</div>
+
+</div>
+
+<div class="card-footer">
+
+<span>
+${project.status}
+</span>
+
+<span>
+${project.overdue_milestones} overdue
+</span>
+
+</div>
+
+`;
+
+                container.appendChild(card);
+
+            });
+
+        }
+
+        function renderAlerts(data) {
+
+            const container = document.getElementById("alertsContainer");
+
+            container.innerHTML = "";
+
+            const alerts = data
+                .filter(project => project.delay_risk >= 60)
+                .sort((a, b) => b.delay_risk - a.delay_risk);
+
+            if (alerts.length === 0) {
+
+                container.innerHTML =
+                    '<div class="empty">No active high-priority alerts.</div>';
+
+                return;
+
+            }
+
+            alerts.forEach(project => {
+
+                const alert = document.createElement("div");
+
+                alert.className = "alert";
+
+                alert.innerHTML = `
+
+<div>
+
+<h4>
+${project.project_id} — ${project.name}
+</h4>
+
+<p>
+${project.reasons[0]}
+</p>
+
+</div>
+
+<div class="alert-score">
+${project.delay_risk}% RISK
+</div>
+
+`;
+
+                alert.onclick = () => {
+                    window.location.href = `/project/${project.project_id}`;
+                };
+
+                alert.style.cursor = "pointer";
+
+                container.appendChild(alert);
+
+            });
+
+        }
+
+        document
+            .getElementById("riskFilter")
+            .addEventListener("change", function () {
+
+                const value = this.value;
+
+                if (value === "all") {
+                    renderProjects(projects);
+                    return;
+                }
+
+                const filtered = projects.filter(project => {
+
+                    if (value === "high")
+                        return project.delay_risk >= 70;
+
+                    if (value === "medium")
+                        return project.delay_risk >= 40 && project.delay_risk < 70;
+
+                    if (value === "low")
+                        return project.delay_risk < 40;
+
+                });
+
+                renderProjects(filtered);
+
+            });
+
+        loadDashboard();
+    </script>
+
+</body>
+
+</html>
